@@ -1,15 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Document</title>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ 
+   
+   <style>
+ * {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  color: burlywood;
+}
+  
+ header {
+    background-color: rgb(87, 117, 41);
+  font-size: 1.5rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  padding: 0.5em 1em;
+  height: 120px;
+}
+ body {
+    color: burlywood;
+   padding-top: 200px;
+    font-size: 2em;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(39, 39, 109);
+    margin: 0;
+    /* position: relative; */
+    align-content: center;
+}
+  .label,    
+.links a {
+  font-weight: bolder;
+  font-size: 1.25em;
+  color:burlywood;
+  text-decoration: underline;
+  margin-left: 0.25em;
+}
+.title {
+  float: left;
+  font-weight: bolder;
+  font-size: 2em;
+  color:burlywood;
+  
+}
+.links {
+  float: right;
+}
+
+div > label {
+color: burlywood;
+}
+.input{
+    font-size: 2rem;
+  padding: 0.5em;
+  background-color: hsl(var(--primary-light-hsl), 0.3);
+  border: 10px solid rgb(87, 117, 41);
+  outline: none;
+  border-radius: 25px;
+  color: rgb(87, 117, 41);
+  font-weight: lighter;
+  cursor: pointer;
+  padding-left: 40%;
+}
+
+button {
+  background-color: rgb(200 0 0);
+  color: white;
+  border: none;
+  height: 36px;
+  width: 105px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 1s, color 1s;
+  margin: 0;
+}
+
+.petChoice{
+  display: flex;
+  flex-direction: column;
+}
+
+a:hover {
+  background-color: rgb(39, 39, 109);
+}
+#petname {
+  height: 30px;
+  width: 120px;
+}
+ </style>
+
 <body>
-    <h1>Pet Finder</h1>
+      <header>
+        <span class="title">Pet Finder</span>
+      
+      <nav class="links">
+        <a href="/api">API</a>
+        <a href="/api/v1/pets">ALL PETS</a>
+        <a href="/api/v1/pets/owner/?owner=John">JOHN'S PET</a>
+        <a href="/api/v1/pets/Rover">ROVER</a>
+      </nav>
+      </header>
+
+      <div class="input">
+            <label for="oetname">
+              
+              <select id="petname" name="petname" onchange="handlePetnameChange()">
+                <option value=""disabled selected hidden>Choose a Pet</option>
+                <option value="Fido">Fido</option>
+                <option value="Spot">Spot</option>
+                <option value="Rover">Rover</option>
+              </select> 
+        
+      </label><br><br>
+      <div class="petChoice">
+          <a href="" id="petnameLabel"></a>
+    <br>
+          <button id="getPet" onclick="handleGetPetClick()">Get Pet Information</button>
+          <div id="petcontainer"></div>
+      </div>
     
-    <script src="script.js"></script>
-</body>
+    <script>
+      const petcontainer= document.getElementById("petcontainer")
+      const getPetButton = document.getElementById("getPet");
+      const petnameElement = document.getElementById("petname");
+      const petnameLabelElement = document.getElementById("petnameLabel");
+      let petname = petnameElement.value;
+      let petnameUrl = `/api/v1/pets/${petname}`;
+      function handlePetnameChange() {
+        petname = petnameElement.value;
+        petnameUrl = `/api/v1/pets/${petname}`;
+        petnameLabelElement.innerHTML = petname;
+        petnameLabelElement.setAttribute("href", petnameUrl);
+        console.log(petname);
+        console.log(petnameUrl);
+      }
+      async function handleGetPetClick() {
+        const response = await fetch(`/api/v1/pets/${petname}`);
+        const pet = await response.json();
+        console.log("Pet", pet);
+        if (!pet.name){
+          alert("No pet selected.")
+          petcontainer.innerHTML=""
+          return
+        }
+        petcontainer.innerHTML= `
+        <h4>ID: ${pet.id}</h4>
+        <h4>Breed: ${pet.breed}</h4>
+        <h4>Age: ${pet.age}</h4>
+        <h4>Owner: ${pet.owner}</h4>
+        <h4>Telephone: ${pet.telephone}</h4>`
+      }
+    </script>
+  </body>
 </html>
